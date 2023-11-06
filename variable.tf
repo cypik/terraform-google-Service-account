@@ -46,15 +46,9 @@ variable "account_id" {
   description = "(Required) The account id that is used to generate the service account email address and a stable unique id."
 }
 
-variable "display_name" {
-  type        = string
-  default     = "Service Account"
-  description = "(Optional) The display name for the service account. Can be updated without creating a new resource."
-}
-
 variable "description" {
   type        = string
-  default     = ""
+  default     = "ManagedBy, 'Opz0' "
   description = " (Optional) A text description of the service account. "
 }
 
@@ -62,12 +56,6 @@ variable "disabled" {
   type        = bool
   default     = false
   description = " (Optional) Whether a service account is disabled or not. Defaults to false."
-}
-
-variable "project_id" {
-  type        = string
-  default     = ""
-  description = "(Optional) The ID of the project in which the resource belongs. If it is not provided, the provider project is used."
 }
 
 variable "google_service_account_key_enabled" {
@@ -113,6 +101,6 @@ variable "members" {
 }
 
 variable "role" {
-  type = list(string)
+  type    = list(string)
   default = ["roles/iam.serviceAccountUser"]
 }

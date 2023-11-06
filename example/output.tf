@@ -53,3 +53,8 @@ output "valid_before" {
   value       = module.service-account.valid_before
   description = " The key can be used before this timestamp. A timestamp in RFC3339 UTC Zulu format, accurate to nanoseconds."
 }
+
+output "etag" {
+  value       = module.service-account.etag
+  description = "The etag of the service account IAM policy."
+}
