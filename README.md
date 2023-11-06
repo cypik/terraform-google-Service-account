@@ -8,7 +8,6 @@ This Terraform module creates a Google Cloud Service Account with configurable o
 ## Usage
 
 ```hcl
-1.Include the service account module:
 module "service-account" {
   source                             = "git::https://github.com/opz0/terraform-google-service-account.git?ref=v1.0.0"
   name                               = "app"
