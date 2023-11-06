@@ -19,8 +19,6 @@ module "service-account" {
   private_key_type                   = "TYPE_GOOGLE_CREDENTIALS_FILE"
   members                            = []
 }
-
-Run terraform init and terraform apply to create the service account.
 ```
 Module Inputs
 name: The name of the service account.
