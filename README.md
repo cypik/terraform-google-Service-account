@@ -20,15 +20,18 @@ module "service-account" {
   members                            = []
 }
 ```
-Module Inputs
-name: The name of the service account.
-environment: The environment for the service account.
-project_id: The Google Cloud project ID.
-google_service_account_key_enabled: Enable Google service account key creation.
-key_algorithm: The algorithm used for the key.
-public_key_type: The type of public key file to generate.
-private_key_type: The type of private key file to generate.
-members: List of members to grant access to the service account.
+## Module Inputs
+- name: The name of the service account.
+- environment: The environment for the service account.
+- project_id: The Google Cloud project ID.
+- google_service_account_key_enabled: Enable Google service account key creation.
+- key_algorithm: The algorithm used for the key.
+- public_key_type: The type of public key file to generate.
+- private_key_type: The type of private key file to generate.
+- members: List of members to grant access to the service account.
+## Module Outputs
+- service_account_email: The email address of the created service account.
+- service_account_key: The key for the created service account.
 
 ## Author
 Your Name
