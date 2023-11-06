@@ -7,11 +7,6 @@ This Terraform module creates a Google Cloud Service Account with configurable o
 
 ## Usage
 
-To use this module, follow these steps:
-
-1. Create a Terraform configuration file (e.g., `main.tf`).
-2. Include the necessary provider block for Google Cloud:
-
 ```hcl
 1.Include the service account module:
 module "service-account" {
