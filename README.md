@@ -1,6 +1,13 @@
 # terraform-gcp-Service-account
 # Terraform Google Cloud Service Account Module
 
+## Table of Contents
+
+- [Introduction](#introduction)
+- [Usage](#usage)
+- [Module Inputs](#module-inputs)
+- [Module Outputs](#module-outputs)
+- [License](#license)
 ## Introduction
 
 This Terraform module creates a Google Cloud Service Account with configurable options. It is designed to be used in conjunction with other infrastructure modules.
@@ -33,6 +40,9 @@ This example demonstrates how to create various GCP resources using the provided
 ## Module Outputs
 - service_account_email: The email address of the created service account.
 - service_account_key: The key for the created service account.
+
+## Examples
+For detailed examples on how to use this module, please refer to the 'examples' directory within this repository.
 
 ## Author
 Your Name
