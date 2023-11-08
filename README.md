@@ -17,7 +17,7 @@ To use this module, you should have Terraform installed and configured for GCP. 
 
 ```hcl
 module "service-account" {
-  source                             = "git::https://github.com/opz0/terraform-google-service-account.git?ref=v1.0.0"
+  source                             = "git::https://github.com/opz0/terraform-gcp-Service-account.git?ref=v1.0.0"
   name                               = "app"
   environment                        = "test"
   key_algorithm                      = "KEY_ALG_RSA_2048"
