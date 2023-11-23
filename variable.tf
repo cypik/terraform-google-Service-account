@@ -19,12 +19,12 @@ variable "label_order" {
 variable "managedby" {
   type        = string
   default     = ""
-  description = "ManagedBy, eg 'Opz0'."
+  description = "ManagedBy, eg 'cypik'."
 }
 
 variable "repository" {
   type        = string
-  default     = ""
+  default     = "https://github.com/cypik/terraform-gcp-Service-account"
   description = "Terraform current module repo"
 }
 
@@ -48,7 +48,7 @@ variable "account_id" {
 
 variable "description" {
   type        = string
-  default     = "ManagedBy, 'Opz0' "
+  default     = "ManagedBy, 'cypik' "
   description = " (Optional) A text description of the service account. "
 }
 
