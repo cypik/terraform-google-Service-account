@@ -53,6 +53,7 @@ output "valid_before" {
   value       = join("", google_service_account_key.mykey[*].valid_before)
   description = " The key can be used before this timestamp. A timestamp in RFC3339 UTC Zulu format, accurate to nanoseconds."
 }
+
 output "etag" {
   value       = join("", compact(google_service_account_iam_binding.admin-account-iam[*].etag))
   description = "The etag of the service account IAM policy."
