@@ -28,7 +28,7 @@ variable "repository" {
   description = "Terraform current module repo"
 }
 
-variable "google_service_account_enabled" {
+variable "service_account_enabled" {
   type        = bool
   default     = true
   description = "Set to false to prevent the module from creating any resources."
@@ -58,7 +58,7 @@ variable "disabled" {
   description = " (Optional) Whether a service account is disabled or not. Defaults to false."
 }
 
-variable "google_service_account_key_enabled" {
+variable "service_account_key_enabled" {
   type        = bool
   default     = true
   description = "Set to false to prevent the module from creating any resources."
@@ -88,7 +88,7 @@ variable "keepers" {
   description = "Arbitrary map of values that, when changed, will trigger a new key to be generated."
 }
 
-variable "google_service_account_iam_binding_enabled" {
+variable "service_account_iam_binding_enabled" {
   type        = bool
   default     = true
   description = "Set to false to prevent the module from creating any resources."
