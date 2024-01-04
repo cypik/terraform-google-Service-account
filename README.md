@@ -10,7 +10,7 @@
 - [License](#license)
 ## Introduction
 
-This Terraform module creates a Google Cloud **Service Account** with configurable options. It is designed to be used in conjunction with other infrastructure modules.
+This Terraform module creates a Google Cloud Service Account with configurable options. It is designed to be used in conjunction with other infrastructure modules.
 
 ## Usage
 To use this module, you should have Terraform installed and configured for GCP. This module provides the necessary Terraform configuration for creating GCP resources, and you can customize the inputs as needed. Below is an example of how to use this module:
@@ -54,7 +54,7 @@ This example demonstrates how to create various GCP resources using the provided
 - `etag` : The etag of the service account IAM policy.
 
 ## Examples
-For detailed examples on how to use this module, please refer to the [EXAMPLE](https://github.com/cypik/terraform-gcp-Service-account/tree/master/example) directory within this repository.
+For detailed examples on how to use this module, please refer to the [Examples](https://github.com/cypik/terraform-gcp-Service-account/tree/master/example) directory within this repository.
 
 ## Author
 Your Name
