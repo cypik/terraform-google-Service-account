@@ -17,10 +17,10 @@ This Terraform module creates a Google Cloud Service Account with configurable o
 
 ## Usage
 To use this module, you should have Terraform installed and configured for GCP. This module provides the necessary Terraform configuration for creating GCP resources, and you can customize the inputs as needed. Below is an example of how to use this module:
-## Example: Service-account
+## Example: service-account
 ```hcl
 module "service-account" {
-  source                             = "cypik/Service-account/google"
+  source                             = "cypik/service-account/google"
   version                            = "1.0.1"
   name                               = "app"
   environment                        = "test"
@@ -33,13 +33,13 @@ module "service-account" {
 This example demonstrates how to create various GCP resources using the provided modules. Adjust the input values to suit your specific requirements.
 
 ## Examples
-For detailed examples on how to use this module, please refer to the [Examples](https://github.com/cypik/terraform-google-Service-account/tree/master/example) directory within this repository.
+For detailed examples on how to use this module, please refer to the [Examples](https://github.com/cypik/terraform-google-service-account/tree/master/example) directory within this repository.
 
 ## Author
 Your Name
 Replace **MIT** and **Cypik** with the appropriate license and your information. Feel free to expand this README with additional details or usage instructions as needed for your specific use case.
 ## License
-This Terraform module is provided under the **MIT** License. Please see the [LICENSE](https://github.com/cypik/terraform-google-Service-account/blob/master/LICENSE) file for more details.
+This Terraform module is provided under the **MIT** License. Please see the [LICENSE](https://github.com/cypik/terraform-google-service-account/blob/master/LICENSE) file for more details.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -87,7 +87,7 @@ This Terraform module is provided under the **MIT** License. Please see the [LIC
 | <a name="input_name"></a> [name](#input\_name) | Name of the resource. Provided by the client when the resource is created. | `string` | `"test"` | no |
 | <a name="input_private_key_type"></a> [private\_key\_type](#input\_private\_key\_type) | (Optional) The output format of the private key. TYPE\_GOOGLE\_CREDENTIALS\_FILE is the default output format. | `string` | `"TYPE_GOOGLE_CREDENTIALS_FILE"` | no |
 | <a name="input_public_key_type"></a> [public\_key\_type](#input\_public\_key\_type) | (Optional) The output format of the public key requested. TYPE\_X509\_PEM\_FILE is the default output format. | `string` | `"TYPE_X509_PEM_FILE"` | no |
-| <a name="input_repository"></a> [repository](#input\_repository) | Terraform current module repo | `string` | `"https://github.com/cypik/terraform-google-Service-account"` | no |
+| <a name="input_repository"></a> [repository](#input\_repository) | Terraform current module repo | `string` | `"https://github.com/cypik/terraform-google-service-account"` | no |
 | <a name="input_role"></a> [role](#input\_role) | n/a | `list(string)` | <pre>[<br>  "roles/iam.serviceAccountUser"<br>]</pre> | no |
 | <a name="input_service_account_enabled"></a> [service\_account\_enabled](#input\_service\_account\_enabled) | Set to false to prevent the module from creating any resources. | `bool` | `true` | no |
 | <a name="input_service_account_iam_binding_enabled"></a> [service\_account\_iam\_binding\_enabled](#input\_service\_account\_iam\_binding\_enabled) | Set to false to prevent the module from creating any resources. | `bool` | `true` | no |
