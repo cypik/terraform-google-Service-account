@@ -22,7 +22,7 @@ To use this module, you should have Terraform installed and configured for GCP. 
 module "service-account" {
   source           = "cypik/service-account/google"
   version          = "1.0.2"
-  name             = "test"
+  name             = "app"
   environment      = "test"
   key_algorithm    = "KEY_ALG_RSA_2048"
   public_key_type  = "TYPE_X509_PEM_FILE"
@@ -87,7 +87,7 @@ This Terraform module is provided under the **MIT** License. Please see the [LIC
 | <a name="input_key_enabled"></a> [key\_enabled](#input\_key\_enabled) | Set to false to prevent the module from creating any resources. | `bool` | `true` | no |
 | <a name="input_label_order"></a> [label\_order](#input\_label\_order) | Label order, e.g. sequence of application name and environment `name`,`environment`,'attribute' [`webserver`,`qa`,`devops`,`public`,] . | `list(any)` | <pre>[<br>  "name",<br>  "environment"<br>]</pre> | no |
 | <a name="input_managedby"></a> [managedby](#input\_managedby) | ManagedBy, eg 'cypik'. | `string` | `"cypik"` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name of the resource. Provided by the client when the resource is created. | `string` | `"test"` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the resource. Provided by the client when the resource is created. | `string` | `""` | no |
 | <a name="input_private_key_type"></a> [private\_key\_type](#input\_private\_key\_type) | (Optional) The output format of the private key. TYPE\_GOOGLE\_CREDENTIALS\_FILE is the default output format. | `string` | `"TYPE_GOOGLE_CREDENTIALS_FILE"` | no |
 | <a name="input_public_key_type"></a> [public\_key\_type](#input\_public\_key\_type) | (Optional) The output format of the public key requested. TYPE\_X509\_PEM\_FILE is the default output format. | `string` | `"TYPE_X509_PEM_FILE"` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Terraform current module repo | `string` | `"https://github.com/cypik/terraform-google-service-account"` | no |

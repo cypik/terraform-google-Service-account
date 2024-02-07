@@ -1,6 +1,6 @@
 variable "name" {
   type        = string
-  default     = "test"
+  default     = ""
   description = "Name of the resource. Provided by the client when the resource is created. "
 }
 
