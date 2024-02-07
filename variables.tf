@@ -58,7 +58,7 @@ variable "disabled" {
   description = " (Optional) Whether a service account is disabled or not. Defaults to false."
 }
 
-variable "service_account_key_enabled" {
+variable "key_enabled" {
   type        = bool
   default     = true
   description = "Set to false to prevent the module from creating any resources."
@@ -88,19 +88,20 @@ variable "keepers" {
   description = "Arbitrary map of values that, when changed, will trigger a new key to be generated."
 }
 
-variable "service_account_iam_binding_enabled" {
+variable "iam_binding_enabled" {
   type        = bool
   default     = true
   description = "Set to false to prevent the module from creating any resources."
 }
 
-variable "members" {
-  type        = list(any)
-  default     = []
-  description = "Identities that will be granted the privilege in role."
+variable "iam_mamber_enabled" {
+  type        = bool
+  default     = true
+  description = "Set to false to prevent the module from creating any resources."
 }
 
-variable "role" {
-  type    = list(string)
-  default = ["roles/iam.serviceAccountUser"]
+variable "roles" {
+  type        = list(string)
+  default     = []
+  description = "The role that should be applied. "
 }

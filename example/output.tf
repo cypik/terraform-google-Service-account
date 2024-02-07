@@ -58,3 +58,8 @@ output "etag" {
   value       = module.service-account.etag
   description = "The etag of the service account IAM policy."
 }
+
+output "roles" {
+  value       = module.service-account.roles
+  description = "The role that should be applied. "
+}

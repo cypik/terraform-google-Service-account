@@ -58,3 +58,8 @@ output "etag" {
   value       = join("", compact(google_service_account_iam_binding.admin-account-iam[*].etag))
   description = "The etag of the service account IAM policy."
 }
+
+output "roles" {
+  value       = var.roles
+  description = "The role that should be applied. "
+}
