@@ -21,6 +21,7 @@ resource "google_service_account" "service_account" {
   description  = var.description
   disabled     = var.disabled
   project      = data.google_client_config.current.project
+
 }
 
 #####==============================================================================
@@ -28,7 +29,7 @@ resource "google_service_account" "service_account" {
 ##### account with Google Cloud.
 #####==============================================================================
 resource "google_service_account_key" "mykey" {
-  count              = var.service_account_key_enabled && var.enabled ? 1 : 0
+  count              = var.key_enabled && var.enabled ? 1 : 0
   service_account_id = join("", google_service_account.service_account[*].name)
   public_key_type    = var.public_key_type
   private_key_type   = var.private_key_type
@@ -41,8 +42,20 @@ resource "google_service_account_key" "mykey" {
 ##### or as an identity.
 #####==============================================================================
 resource "google_service_account_iam_binding" "admin-account-iam" {
-  count              = var.service_account_iam_binding_enabled && var.enabled ? 1 : 0
+  count              = var.iam_binding_enabled && var.enabled ? 1 : 0
   service_account_id = join("", google_service_account.service_account[*].name)
-  role               = var.role[0]
-  members            = var.members
+  role               = var.roles[count.index]
+  members = [
+    "serviceAccount:${google_service_account.service_account[count.index].email}"
+  ]
+}
+#####==============================================================================
+##### Four different resources help you manage your IAM policy for a project.
+#####==============================================================================
+#tfsec:ignore:google-iam-no-project-level-service-account-impersonation
+resource "google_project_iam_member" "default" {
+  count   = var.iam_mamber_enabled && var.enabled ? 1 : 0
+  project = data.google_client_config.current.project
+  role    = var.roles[count.index]
+  member  = format("serviceAccount:%s", join("", google_service_account.service_account[*].email))
 }
