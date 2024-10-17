@@ -25,9 +25,19 @@ To use this module, you should have Terraform installed and configured for GCP. 
 module "service-account" {
   source      = "cypik/service-account/google"
   version     = "1.0.3"
-  names       = ["app"]
-  roles       = ["roles/viewer"]
-  description = "Single Account Description"
+  name        = ["app"]
+
+  roles = {
+    "app" = "roles/viewer"
+  }
+
+  description = {
+    "app" = "Single Account Description"
+  }
+
+  display_name = {
+    "app" = "Single Service Account"
+  }
 }
 ```
 
@@ -36,14 +46,23 @@ module "service-account" {
 module "service-account" {
   source       = "cypik/service-account/google"
   version      = "1.0.3"
-  names        = ["first", "second"]
-  display_name = "Test Multiple Service Accounts"
-  description  = "Test Multiple Service Accounts description"
+  name         = ["svc-account-first", "svc-account-second"]
 
-  roles = [
-    "roles/viewer",
-    "roles/storage.objectViewer",
-  ]
+  display_name = {
+    "svc-account-first"  = "Service Account One"
+    "svc-account-second" = "Service Account Two"
+  }
+
+  description = {
+    "svc-account-first"  = "Description for Account 1"
+    "svc-account-second" = "Description for Account 2"
+  }
+
+  roles = {
+    "svc-account-first"  = "roles/editor"
+    "svc-account-second" = "roles/viewer"
+  }
+
   generate_keys = true # Change to false to skip key generation
 }
 ```
@@ -72,7 +91,6 @@ This Terraform module is provided under the **MIT** License. Please see the [LIC
 | Name | Version |
 |------|---------|
 | <a name="provider_google"></a> [google](#provider\_google) | >=6.1.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.6.3 |
 
 ## Modules
 
@@ -90,9 +108,8 @@ This Terraform module is provided under the **MIT** License. Please see the [LIC
 | [google_organization_iam_member.xpn_admin](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/organization_iam_member) | resource |
 | [google_project_iam_member.project_roles](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/project_iam_member) | resource |
 | [google_service_account.service_accounts](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account) | resource |
-| [google_service_account_iam_binding.admin-account-iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_binding) | resource |
+| [google_service_account_iam_binding.admin_account_iam](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_iam_binding) | resource |
 | [google_service_account_key.mykey](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/service_account_key) | resource |
-| [random_string.bucket_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
 | [google_client_config.current](https://registry.terraform.io/providers/hashicorp/google/latest/docs/data-sources/client_config) | data source |
 
 ## Inputs
@@ -100,9 +117,8 @@ This Terraform module is provided under the **MIT** License. Please see the [LIC
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_billing_account_id"></a> [billing\_account\_id](#input\_billing\_account\_id) | If assigning billing role, specificy a billing account (default is to assign at the organizational level). | `string` | `""` | no |
-| <a name="input_description"></a> [description](#input\_description) | (Optional) A text description of the service account. | `string` | `"ManagedBy, 'cypik' "` | no |
-| <a name="input_descriptions"></a> [descriptions](#input\_descriptions) | List of descriptions for the created service accounts (elements default to the value of `description`) | `list(string)` | `[]` | no |
-| <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Display names of the created service accounts (defaults to 'Terraform-managed service account') | `string` | `"Terraform-managed service account"` | no |
+| <a name="input_description"></a> [description](#input\_description) | (Optional) A text description of the service account. | `map(string)` | `{}` | no |
+| <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Map of display names for service accounts | `map(string)` | `{}` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment (e.g. `prod`, `dev`, `staging`). | `string` | `""` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | Additional tags for the resource. | `map(string)` | `{}` | no |
 | <a name="input_generate_keys"></a> [generate\_keys](#input\_generate\_keys) | Generate keys for service accounts. | `bool` | `false` | no |
@@ -112,12 +128,12 @@ This Terraform module is provided under the **MIT** License. Please see the [LIC
 | <a name="input_key_algorithm"></a> [key\_algorithm](#input\_key\_algorithm) | (Optional) The algorithm used to generate the key. KEY\_ALG\_RSA\_2048 is the default algorithm. | `string` | `"KEY_ALG_RSA_2048"` | no |
 | <a name="input_label_order"></a> [label\_order](#input\_label\_order) | Label order, e.g. sequence of application name and environment `name`,`environment`,'attribute' [`webserver`,`qa`,`devops`,`public`,] . | `list(any)` | <pre>[<br>  "name",<br>  "environment"<br>]</pre> | no |
 | <a name="input_managedby"></a> [managedby](#input\_managedby) | ManagedBy, e.g. 'info@cypik.com'. | `string` | `"info@cypik.com"` | no |
-| <a name="input_names"></a> [names](#input\_names) | Name of the resource. Provided by the client when the resource is created. | `list(string)` | `[]` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the resource. Provided by the client when the resource is created. | `list(string)` | `[]` | no |
 | <a name="input_org_id"></a> [org\_id](#input\_org\_id) | Id of the organization for org-level roles. | `string` | `""` | no |
 | <a name="input_private_key_type"></a> [private\_key\_type](#input\_private\_key\_type) | (Optional) The output format of the private key. TYPE\_GOOGLE\_CREDENTIALS\_FILE is the default output format. | `string` | `"TYPE_GOOGLE_CREDENTIALS_FILE"` | no |
 | <a name="input_public_key_type"></a> [public\_key\_type](#input\_public\_key\_type) | (Optional) The output format of the public key requested. TYPE\_X509\_PEM\_FILE is the default output format. | `string` | `"TYPE_X509_PEM_FILE"` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Terraform current module repo | `string` | `"https://github.com/cypik/terraform-google-service-account"` | no |
-| <a name="input_roles"></a> [roles](#input\_roles) | Common roles to apply to all service accounts, project=>role as elements. | `list(string)` | `[]` | no |
+| <a name="input_roles"></a> [roles](#input\_roles) | Map of roles for service accounts | `map(string)` | `{}` | no |
 
 ## Outputs
 

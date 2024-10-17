@@ -1,7 +1,7 @@
 module "labels" {
   source      = "cypik/labels/google"
   version     = "1.0.2"
-  name        = var.names[0]
+  name        = var.name[0]
   environment = var.environment
   label_order = var.label_order
   managedby   = var.managedby
@@ -10,39 +10,29 @@ module "labels" {
 }
 
 data "google_client_config" "current" {}
-resource "random_string" "bucket_suffix" {
-  length  = 4 # Length of the random string
-  upper   = false
-  lower   = true
-  special = false
-}
-
 
 locals {
   account_billing = var.grant_billing_role && var.billing_account_id != ""
   org_billing     = var.grant_billing_role && var.billing_account_id == "" && var.org_id != ""
 
-  xpn             = var.grant_xpn_roles && var.org_id != ""
-  names           = toset(var.names)
-  name_role_pairs = setproduct(local.names, toset(var.roles))
-  project_roles_map_data = zipmap(
-    [for pair in local.name_role_pairs : "${pair[0]}-${pair[1]}"],
-    [for pair in local.name_role_pairs : {
-      name = pair[0]
-      role = pair[1]
-    }]
-  )
+  xpn  = var.grant_xpn_roles && var.org_id != ""
+  name = toset(var.name)
+
+  name_role_pairs = [for name in local.name : {
+    name = name
+    role = var.roles[name]
+  }]
 }
 
 #####==============================================================================
 ##### Allows management of a Google Cloud service account.
 #####==============================================================================
 resource "google_service_account" "service_accounts" {
-  for_each = local.names
+  for_each = toset(var.name)
 
-  account_id   = "${each.key}-${random_string.bucket_suffix.result}" # Include module.labels.id in account_id
-  display_name = var.display_name
-  description  = index(var.names, each.value) >= length(var.descriptions) ? var.description : element(var.descriptions, index(var.names, each.value))
+  account_id   = format("svc-%s", each.key)
+  display_name = var.display_name[each.key]
+  description  = var.description[each.key]
   project      = data.google_client_config.current.project
 }
 
@@ -50,17 +40,16 @@ resource "google_service_account" "service_accounts" {
 ##### When managing IAM roles, you can treat a service account either as a resource
 ##### or as an identity.
 #####==============================================================================
-resource "google_service_account_iam_binding" "admin-account-iam" {
+resource "google_service_account_iam_binding" "admin_account_iam" {
   for_each = google_service_account.service_accounts
 
   service_account_id = format("projects/%s/serviceAccounts/%s", data.google_client_config.current.project, google_service_account.service_accounts[each.key].email)
-  role               = var.roles[0]
+  role               = var.roles[each.key]
   members            = [format("serviceAccount:%s", google_service_account.service_accounts[each.key].email)]
 }
 
-
 resource "google_project_iam_member" "project_roles" {
-  for_each = local.project_roles_map_data
+  for_each = { for pair in local.name_role_pairs : pair.name => pair if pair.role != "" }
 
   project = data.google_client_config.current.project
   role    = each.value.role
@@ -68,7 +57,7 @@ resource "google_project_iam_member" "project_roles" {
 }
 
 resource "google_organization_iam_member" "billing_user" {
-  for_each = local.org_billing ? local.names : toset([])
+  for_each = local.org_billing ? local.name : toset([])
 
   org_id = var.org_id
   role   = "roles/billing.user"
@@ -76,7 +65,7 @@ resource "google_organization_iam_member" "billing_user" {
 }
 
 resource "google_billing_account_iam_member" "billing_user" {
-  for_each = local.account_billing ? local.names : toset([])
+  for_each = local.account_billing ? local.name : toset([])
 
   billing_account_id = var.billing_account_id
   role               = "roles/billing.user"
@@ -84,7 +73,7 @@ resource "google_billing_account_iam_member" "billing_user" {
 }
 
 resource "google_organization_iam_member" "xpn_admin" {
-  for_each = local.xpn ? local.names : toset([])
+  for_each = local.xpn ? local.name : toset([])
 
   org_id = var.org_id
   role   = "roles/compute.xpnAdmin"
@@ -92,7 +81,7 @@ resource "google_organization_iam_member" "xpn_admin" {
 }
 
 resource "google_organization_iam_member" "organization_viewer" {
-  for_each = local.xpn ? local.names : toset([])
+  for_each = local.xpn ? local.name : toset([])
 
   org_id = var.org_id
   role   = "roles/resourcemanager.organizationViewer"
@@ -104,7 +93,7 @@ resource "google_organization_iam_member" "organization_viewer" {
 ##### account with Google Cloud.
 #####==============================================================================
 resource "google_service_account_key" "mykey" {
-  for_each = var.generate_keys ? local.names : toset([])
+  for_each = var.generate_keys ? local.name : toset([])
 
   service_account_id = google_service_account.service_accounts[each.key].email
   public_key_type    = var.public_key_type

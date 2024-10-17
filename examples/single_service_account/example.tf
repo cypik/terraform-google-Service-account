@@ -8,8 +8,18 @@ provider "google" {
 ##### Single-service-account module call .
 #####==============================================================================
 module "service-account" {
-  source      = "./../../"
-  names       = ["app"]
-  roles       = ["roles/viewer"]
-  description = "Single Account Description"
+  source = "./../../"
+  name   = ["app"]
+
+  roles = {
+    "app" = "roles/viewer"
+  }
+
+  description = {
+    "app" = "Single Account Description"
+  }
+
+  display_name = {
+    "app" = "Single Service Account"
+  }
 }
