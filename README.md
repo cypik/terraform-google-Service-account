@@ -23,48 +23,44 @@ To use this module, you should have Terraform installed and configured for GCP. 
 
 ```hcl
 module "service-account" {
-  source      = "cypik/service-account/google"
-  version     = "1.0.3"
-  name        = ["app"]
+  source          = "cypik/service-account/google"
+  version         = "1.0.3"
+  service_account = [
+    {
+      name          = "test"
+      display_name  = "Single Service Account"
+      description   = "Single Account Description"
+      roles         = ["roles/viewer"] # Single role
+      generate_keys = false
+    }
 
-  roles = {
-    "app" = "roles/viewer"
-  }
-
-  description = {
-    "app" = "Single Account Description"
-  }
-
-  display_name = {
-    "app" = "Single Service Account"
-  }
+  ]
 }
 ```
 
 ## Examples: service-account
 ```hcl
 module "service-account" {
-  source       = "cypik/service-account/google"
-  version      = "1.0.3"
-  name         = ["svc-account-first", "svc-account-second"]
-
-  display_name = {
-    "svc-account-first"  = "Service Account One"
-    "svc-account-second" = "Service Account Two"
-  }
-
-  description = {
-    "svc-account-first"  = "Description for Account 1"
-    "svc-account-second" = "Description for Account 2"
-  }
-
-  roles = {
-    "svc-account-first"  = "roles/editor"
-    "svc-account-second" = "roles/viewer"
-  }
-
-  generate_keys = true # Change to false to skip key generation
+  source          = "cypik/service-account/google"
+  version         = "1.0.3"
+  service_account = [
+    {
+      name          = "svc-account-first"
+      display_name  = "First Service Account"
+      description   = "This is the first service account"
+      roles         = ["roles/editor", "roles/viewer", "roles/owner"] # Multiple roles
+      generate_keys = true
+    },
+    {
+      name          = "svc-account-second"
+      display_name  = "Second Service Account"
+      description   = "This is the second service account"
+      roles         = ["roles/editor"] # Single role
+      generate_keys = true
+    }
+  ]
 }
+
 ```
 This example demonstrates how to create various GCP resources using the provided modules. Adjust the input values to suit your specific requirements.
 
@@ -117,23 +113,20 @@ This Terraform module is provided under the **MIT** License. Please see the [LIC
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_billing_account_id"></a> [billing\_account\_id](#input\_billing\_account\_id) | If assigning billing role, specificy a billing account (default is to assign at the organizational level). | `string` | `""` | no |
-| <a name="input_description"></a> [description](#input\_description) | (Optional) A text description of the service account. | `map(string)` | `{}` | no |
-| <a name="input_display_name"></a> [display\_name](#input\_display\_name) | Map of display names for service accounts | `map(string)` | `{}` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Environment (e.g. `prod`, `dev`, `staging`). | `string` | `""` | no |
 | <a name="input_extra_tags"></a> [extra\_tags](#input\_extra\_tags) | Additional tags for the resource. | `map(string)` | `{}` | no |
-| <a name="input_generate_keys"></a> [generate\_keys](#input\_generate\_keys) | Generate keys for service accounts. | `bool` | `false` | no |
 | <a name="input_grant_billing_role"></a> [grant\_billing\_role](#input\_grant\_billing\_role) | Grant billing user role. | `bool` | `false` | no |
 | <a name="input_grant_xpn_roles"></a> [grant\_xpn\_roles](#input\_grant\_xpn\_roles) | Grant roles for shared VPC management. | `bool` | `true` | no |
 | <a name="input_keepers"></a> [keepers](#input\_keepers) | Arbitrary map of values that, when changed, will trigger a new key to be generated. | `map(string)` | `null` | no |
 | <a name="input_key_algorithm"></a> [key\_algorithm](#input\_key\_algorithm) | (Optional) The algorithm used to generate the key. KEY\_ALG\_RSA\_2048 is the default algorithm. | `string` | `"KEY_ALG_RSA_2048"` | no |
 | <a name="input_label_order"></a> [label\_order](#input\_label\_order) | Label order, e.g. sequence of application name and environment `name`,`environment`,'attribute' [`webserver`,`qa`,`devops`,`public`,] . | `list(any)` | <pre>[<br>  "name",<br>  "environment"<br>]</pre> | no |
 | <a name="input_managedby"></a> [managedby](#input\_managedby) | ManagedBy, e.g. 'info@cypik.com'. | `string` | `"info@cypik.com"` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name of the resource. Provided by the client when the resource is created. | `list(string)` | `[]` | no |
+| <a name="input_name"></a> [name](#input\_name) | Name of the resource. Provided by the client when the resource is created. | `list(string)` | <pre>[<br>  ""<br>]</pre> | no |
 | <a name="input_org_id"></a> [org\_id](#input\_org\_id) | Id of the organization for org-level roles. | `string` | `""` | no |
 | <a name="input_private_key_type"></a> [private\_key\_type](#input\_private\_key\_type) | (Optional) The output format of the private key. TYPE\_GOOGLE\_CREDENTIALS\_FILE is the default output format. | `string` | `"TYPE_GOOGLE_CREDENTIALS_FILE"` | no |
 | <a name="input_public_key_type"></a> [public\_key\_type](#input\_public\_key\_type) | (Optional) The output format of the public key requested. TYPE\_X509\_PEM\_FILE is the default output format. | `string` | `"TYPE_X509_PEM_FILE"` | no |
 | <a name="input_repository"></a> [repository](#input\_repository) | Terraform current module repo | `string` | `"https://github.com/cypik/terraform-google-service-account"` | no |
-| <a name="input_roles"></a> [roles](#input\_roles) | Map of roles for service accounts | `map(string)` | `{}` | no |
+| <a name="input_service_account"></a> [service\_account](#input\_service\_account) | A list of service accounts with their attributes, including name, display\_name, description, roles, and generate\_keys. | <pre>list(object({<br>    name          = string<br>    display_name  = string<br>    description   = string<br>    roles         = list(string)<br>    generate_keys = bool<br>  }))</pre> | n/a | yes |
 
 ## Outputs
 

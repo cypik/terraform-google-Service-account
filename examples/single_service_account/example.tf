@@ -9,17 +9,14 @@ provider "google" {
 #####==============================================================================
 module "service-account" {
   source = "./../../"
-  name   = ["app"]
+  service_account = [
+    {
+      name          = "test"
+      display_name  = "Single Service Account"
+      description   = "Single Account Description"
+      roles         = ["roles/viewer"] # Single role
+      generate_keys = false
+    }
 
-  roles = {
-    "app" = "roles/viewer"
-  }
-
-  description = {
-    "app" = "Single Account Description"
-  }
-
-  display_name = {
-    "app" = "Single Service Account"
-  }
+  ]
 }
