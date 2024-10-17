@@ -1,4 +1,4 @@
-variable "names" {
+variable "name" {
   type        = list(string)
   default     = []
   description = "Name of the resource. Provided by the client when the resource is created. "
@@ -35,8 +35,8 @@ variable "repository" {
 }
 
 variable "description" {
-  type        = string
-  default     = "ManagedBy, 'cypik' "
+  type        = map(string)
+  default     = {}
   description = " (Optional) A text description of the service account. "
 }
 
@@ -62,12 +62,6 @@ variable "keepers" {
   type        = map(string)
   default     = null
   description = "Arbitrary map of values that, when changed, will trigger a new key to be generated."
-}
-
-variable "roles" {
-  type        = list(string)
-  default     = []
-  description = "Common roles to apply to all service accounts, project=>role as elements."
 }
 
 variable "grant_billing_role" {
@@ -101,13 +95,13 @@ variable "generate_keys" {
 }
 
 variable "display_name" {
-  type        = string
-  default     = "Terraform-managed service account"
-  description = "Display names of the created service accounts (defaults to 'Terraform-managed service account')"
+  type        = map(string)
+  default     = {}
+  description = "Map of display names for service accounts"
 }
 
-variable "descriptions" {
-  type        = list(string)
-  default     = []
-  description = "List of descriptions for the created service accounts (elements default to the value of `description`)"
+variable "roles" {
+  type        = map(string)
+  default     = {}
+  description = "Map of roles for service accounts"
 }
