@@ -1,6 +1,6 @@
 variable "name" {
   type        = list(string)
-  default     = []
+  default     = [""]
   description = "Name of the resource. Provided by the client when the resource is created. "
 }
 
@@ -32,12 +32,6 @@ variable "repository" {
   type        = string
   default     = "https://github.com/cypik/terraform-google-service-account"
   description = "Terraform current module repo"
-}
-
-variable "description" {
-  type        = map(string)
-  default     = {}
-  description = " (Optional) A text description of the service account. "
 }
 
 variable "public_key_type" {
@@ -88,20 +82,14 @@ variable "org_id" {
   description = "Id of the organization for org-level roles."
 }
 
-variable "generate_keys" {
-  type        = bool
-  default     = false
-  description = "Generate keys for service accounts."
-}
+variable "service_account" {
+  type = list(object({
+    name          = string
+    display_name  = string
+    description   = string
+    roles         = list(string)
+    generate_keys = bool
+  }))
 
-variable "display_name" {
-  type        = map(string)
-  default     = {}
-  description = "Map of display names for service accounts"
-}
-
-variable "roles" {
-  type        = map(string)
-  default     = {}
-  description = "Map of roles for service accounts"
+  description = "A list of service accounts with their attributes, including name, display_name, description, roles, and generate_keys."
 }

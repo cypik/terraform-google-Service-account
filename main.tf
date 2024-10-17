@@ -1,7 +1,7 @@
 module "labels" {
   source      = "cypik/labels/google"
   version     = "1.0.2"
-  name        = var.name[0]
+  name        = var.name[0] # If you only need the first element of a list
   environment = var.environment
   label_order = var.label_order
   managedby   = var.managedby
@@ -15,77 +15,107 @@ locals {
   account_billing = var.grant_billing_role && var.billing_account_id != ""
   org_billing     = var.grant_billing_role && var.billing_account_id == "" && var.org_id != ""
 
-  xpn  = var.grant_xpn_roles && var.org_id != ""
-  name = toset(var.name)
+  xpn   = var.grant_xpn_roles && var.org_id != ""
+  names = [for account in var.service_account : account.name] # Extract names
 
-  name_role_pairs = [for name in local.name : {
-    name = name
-    role = var.roles[name]
-  }]
+  # Flattened service account roles
+  service_account_roles = flatten([
+    for account in var.service_account : [
+      for role in account.roles : {
+        account_name = account.name
+        role         = role
+      }
+    ]
+  ])
+
+  # Name-role pairs based on flattened service account roles
+  name_role_pairs = [
+    for pair in local.service_account_roles : {
+      name = pair.account_name
+      role = pair.role
+    }
+  ]
 }
 
 #####==============================================================================
 ##### Allows management of a Google Cloud service account.
 #####==============================================================================
 resource "google_service_account" "service_accounts" {
-  for_each = toset(var.name)
+  for_each = { for account in var.service_account : account.name => account }
 
   account_id   = format("svc-%s", each.key)
-  display_name = var.display_name[each.key]
-  description  = var.description[each.key]
+  display_name = each.value.display_name
+  description  = each.value.description
   project      = data.google_client_config.current.project
 }
 
 #####==============================================================================
-##### When managing IAM roles, you can treat a service account either as a resource
-##### or as an identity.
+##### Managing IAM roles for the service accounts.
 #####==============================================================================
 resource "google_service_account_iam_binding" "admin_account_iam" {
-  for_each = google_service_account.service_accounts
+  for_each = {
+    for sa in var.service_account : sa.name => sa
+  }
 
-  service_account_id = format("projects/%s/serviceAccounts/%s", data.google_client_config.current.project, google_service_account.service_accounts[each.key].email)
-  role               = var.roles[each.key]
-  members            = [format("serviceAccount:%s", google_service_account.service_accounts[each.key].email)]
+  service_account_id = format("projects/%s/serviceAccounts/%s",
+    data.google_client_config.current.project,
+    google_service_account.service_accounts[each.key].email
+  )
+
+  # Create an IAM binding for each role associated with the service account.
+  role = each.value.roles[0] # Choose the first role for binding (adjust as needed)
+
+  members = [
+    for role in each.value.roles : format("serviceAccount:%s", google_service_account.service_accounts[each.key].email)
+  ]
 }
 
 resource "google_project_iam_member" "project_roles" {
-  for_each = { for pair in local.name_role_pairs : pair.name => pair if pair.role != "" }
+  for_each = {
+    for pair in local.name_role_pairs :
+    "${pair.name}-${pair.role}" => pair if pair.role != "" # Ensure unique keys by combining name and role
+  }
 
   project = data.google_client_config.current.project
-  role    = each.value.role
-  member  = format("serviceAccount:%s", google_service_account.service_accounts[each.value.name].email)
+
+  # Assign the role from the local variable
+  role = each.value.role
+
+  # Create the member binding for the service account
+  member = format("serviceAccount:%s", google_service_account.service_accounts[each.value.name].email)
 }
 
+
 resource "google_organization_iam_member" "billing_user" {
-  for_each = local.org_billing ? local.name : toset([])
+  for_each = local.org_billing ? local.names : toset([]) # Use local.names instead
 
   org_id = var.org_id
   role   = "roles/billing.user"
-  member = "serviceAccount:${google_service_account.service_accounts[each.value].email}"
+  member = format("serviceAccount:%s", google_service_account.service_accounts[each.value].email) # Use each.value to access the service account
 }
 
 resource "google_billing_account_iam_member" "billing_user" {
-  for_each = local.account_billing ? local.name : toset([])
+  for_each = local.account_billing ? local.names : toset([]) # Use local.names instead
 
   billing_account_id = var.billing_account_id
   role               = "roles/billing.user"
-  member             = "serviceAccount:${google_service_account.service_accounts[each.value].email}"
+  member             = format("serviceAccount:%s", google_service_account.service_accounts[each.value].email) # Use each.value to access the service account
 }
 
 resource "google_organization_iam_member" "xpn_admin" {
-  for_each = local.xpn ? local.name : toset([])
+  for_each = local.xpn ? local.names : toset([]) # Use local.names instead
 
   org_id = var.org_id
   role   = "roles/compute.xpnAdmin"
-  member = "serviceAccount:${google_service_account.service_accounts[each.value].email}"
+  member = format("serviceAccount:%s", google_service_account.service_accounts[each.value].email) # Use each.value to access the service account
 }
 
 resource "google_organization_iam_member" "organization_viewer" {
-  for_each = local.xpn ? local.name : toset([])
+  for_each = local.xpn ? local.names : toset([]) # Use local.names instead
 
   org_id = var.org_id
   role   = "roles/resourcemanager.organizationViewer"
-  member = "serviceAccount:${google_service_account.service_accounts[each.value].email}"
+  member = format("serviceAccount:%s", google_service_account.service_accounts[each.value].email) # Use each.value to access the service account
 }
 
 #####==============================================================================
@@ -93,7 +123,7 @@ resource "google_organization_iam_member" "organization_viewer" {
 ##### account with Google Cloud.
 #####==============================================================================
 resource "google_service_account_key" "mykey" {
-  for_each = var.generate_keys ? local.name : toset([])
+  for_each = { for account in var.service_account : account.name => account if account.generate_keys }
 
   service_account_id = google_service_account.service_accounts[each.key].email
   public_key_type    = var.public_key_type
