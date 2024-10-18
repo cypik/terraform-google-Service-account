@@ -1,6 +1,6 @@
 variable "name" {
-  type        = string
-  default     = ""
+  type        = list(string)
+  default     = [""]
   description = "Name of the resource. Provided by the client when the resource is created. "
 }
 
@@ -16,52 +16,22 @@ variable "label_order" {
   description = "Label order, e.g. sequence of application name and environment `name`,`environment`,'attribute' [`webserver`,`qa`,`devops`,`public`,] ."
 }
 
+variable "extra_tags" {
+  type        = map(string)
+  default     = {}
+  description = "Additional tags for the resource."
+}
+
 variable "managedby" {
   type        = string
-  default     = "cypik"
-  description = "ManagedBy, eg 'cypik'."
+  default     = "info@cypik.com"
+  description = "ManagedBy, e.g. 'info@cypik.com'."
 }
 
 variable "repository" {
   type        = string
   default     = "https://github.com/cypik/terraform-google-service-account"
   description = "Terraform current module repo"
-}
-
-variable "service_account_enabled" {
-  type        = bool
-  default     = true
-  description = "Set to false to prevent the module from creating any resources."
-}
-
-variable "enabled" {
-  type        = bool
-  default     = true
-  description = "A boolean flag to enable/disable service-account ."
-}
-
-variable "account_id" {
-  type        = string
-  default     = "service-account-id"
-  description = "(Required) The account id that is used to generate the service account email address and a stable unique id."
-}
-
-variable "description" {
-  type        = string
-  default     = "ManagedBy, 'cypik' "
-  description = " (Optional) A text description of the service account. "
-}
-
-variable "disabled" {
-  type        = bool
-  default     = false
-  description = " (Optional) Whether a service account is disabled or not. Defaults to false."
-}
-
-variable "key_enabled" {
-  type        = bool
-  default     = true
-  description = "Set to false to prevent the module from creating any resources."
 }
 
 variable "public_key_type" {
@@ -88,20 +58,38 @@ variable "keepers" {
   description = "Arbitrary map of values that, when changed, will trigger a new key to be generated."
 }
 
-variable "iam_binding_enabled" {
+variable "grant_billing_role" {
   type        = bool
-  default     = true
-  description = "Set to false to prevent the module from creating any resources."
+  default     = false
+  description = "Grant billing user role."
 }
 
-variable "iam_mamber_enabled" {
-  type        = bool
-  default     = true
-  description = "Set to false to prevent the module from creating any resources."
+variable "billing_account_id" {
+  type        = string
+  default     = ""
+  description = "If assigning billing role, specificy a billing account (default is to assign at the organizational level)."
 }
 
-variable "roles" {
-  type        = list(string)
-  default     = []
-  description = "The role that should be applied. "
+variable "grant_xpn_roles" {
+  type        = bool
+  default     = true
+  description = "Grant roles for shared VPC management."
+}
+
+variable "org_id" {
+  type        = string
+  default     = ""
+  description = "Id of the organization for org-level roles."
+}
+
+variable "service_account" {
+  type = list(object({
+    name          = string
+    display_name  = string
+    description   = string
+    roles         = list(string)
+    generate_keys = bool
+  }))
+
+  description = "A list of service accounts with their attributes, including name, display_name, description, roles, and generate_keys."
 }
