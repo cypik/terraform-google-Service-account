@@ -74,8 +74,8 @@ resource "google_project_iam_member" "project_roles" {
   }
 
   project = data.google_client_config.current.project
-  role = each.value.role
-  member = format("serviceAccount:%s", google_service_account.service_accounts[each.value.name].email)
+  role    = each.value.role
+  member  = format("serviceAccount:%s", google_service_account.service_accounts[each.value.name].email)
 }
 
 
