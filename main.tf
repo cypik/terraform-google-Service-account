@@ -18,7 +18,6 @@ locals {
   xpn   = var.grant_xpn_roles && var.org_id != ""
   names = [for account in var.service_account : account.name] # Extract names
 
-  # Flattened service account roles
   service_account_roles = flatten([
     for account in var.service_account : [
       for role in account.roles : {
@@ -28,7 +27,6 @@ locals {
     ]
   ])
 
-  # Name-role pairs based on flattened service account roles
   name_role_pairs = [
     for pair in local.service_account_roles : {
       name = pair.account_name
@@ -62,8 +60,7 @@ resource "google_service_account_iam_binding" "admin_account_iam" {
     google_service_account.service_accounts[each.key].email
   )
 
-  # Create an IAM binding for each role associated with the service account.
-  role = each.value.roles[0] # Choose the first role for binding (adjust as needed)
+  role = each.value.roles[0]
 
   members = [
     for role in each.value.roles : format("serviceAccount:%s", google_service_account.service_accounts[each.key].email)
@@ -77,11 +74,7 @@ resource "google_project_iam_member" "project_roles" {
   }
 
   project = data.google_client_config.current.project
-
-  # Assign the role from the local variable
   role = each.value.role
-
-  # Create the member binding for the service account
   member = format("serviceAccount:%s", google_service_account.service_accounts[each.value.name].email)
 }
 

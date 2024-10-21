@@ -33,7 +33,6 @@ module "service-account" {
       roles         = ["roles/viewer"] # Single role
       generate_keys = false
     }
-
   ]
 }
 ```
